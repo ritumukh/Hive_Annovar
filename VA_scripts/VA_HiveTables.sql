@@ -31,7 +31,7 @@ TBLPROPERTIES ("skip.header.line.count"="11");
 
 DROP TABLE IF EXISTS va_aaa.loci_report;
 
-CREATE EXTERNAL TABLE loci_report
+CREATE EXTERNAL TABLE va_aaa.loci_report
 (
 Index       INT,
 SNP_Name    STRING,   
