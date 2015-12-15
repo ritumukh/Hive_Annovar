@@ -49,5 +49,5 @@ SELECT
     b.exonicfunc_refgene        exonicfunc_refgene,
     b.aachange_refgene          aachange_refgene,
     a.chromosome                chromosome
-FROM va_aaa.va_aaa_loci_part a JOIN annovar.refgene_part b
+FROM va_aaa.va_aaa_loci_part a LEFT OUTER JOIN annovar.refgene_part b
 ON (a.position = b.start_position AND a.chromosome = b.chromosome);

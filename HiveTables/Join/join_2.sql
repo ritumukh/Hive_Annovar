@@ -59,6 +59,6 @@ SELECT
     b.exonicfunc_gencode        exonicfunc_gencode,
     aachange_gencode            aachange_gencode,
     a.chromosome                chromosome
-FROM va_aaa.va_aaa_loci_annovar_1 a JOIN annovar.gencode_part b
+FROM va_aaa.va_aaa_loci_annovar_1 a LEFT OUTER JOIN annovar.gencode_part b
 ON (a.position = b.start_position AND a.chromosome = b.chromosome);
 

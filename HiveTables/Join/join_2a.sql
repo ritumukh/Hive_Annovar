@@ -2,12 +2,11 @@ USE va_aaa;
 SET hive.enforce.bucketing = true;
 SET hive.exec.dynamic.partition = true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
-SET mapreduce.map.memory.mb=8192;
-SET hive.exec.max.dynamic.partitions=100000;
-SET hive.exec.max.dynamic.partitions.pernode=100000;
+SET mapreduce.map.memory.mb=4096;
 
-DROP TABLE IF EXISTS VA_AAA.VA_AAA_LOCI_ANNOVAR_3;
-CREATE TABLE VA_AAA.VA_AAA_LOCI_ANNOVAR_3
+
+DROP TABLE IF EXISTS VA_AAA.VA_AAA_LOCI_ANNOVAR_2a;
+CREATE TABLE VA_AAA.VA_AAA_LOCI_ANNOVAR_2a
 (
     position                    INT,
     snp_name                    STRING,
@@ -28,16 +27,13 @@ CREATE TABLE VA_AAA.VA_AAA_LOCI_ANNOVAR_3
     exonicfunc_gencode          STRING,
     aachange_gencode            STRING,
     wgencodebroadhmmk562hmm     STRING,
-    dgvmerged                   STRING,
-    wgencoderegtfbsclustered    STRING,
-    wgrna                       STRING,
-    clinvar_20150629            STRING
+    dgvmerged                   STRING
 )
 PARTITIONED BY (chromosome STRING)
 CLUSTERED BY (sample_id) SORTED BY (position) INTO 32 BUCKETS
 STORED AS ORC TBLPROPERTIES ("orc.compress"="ZLIB");
 
-INSERT INTO TABLE VA_AAA.VA_AAA_LOCI_ANNOVAR_3 PARTITION(chromosome)
+INSERT INTO TABLE VA_AAA.VA_AAA_LOCI_ANNOVAR_2a PARTITION(chromosome)
 SELECT
     a.position                  position,
     a.snp_name                  snp_name,
@@ -57,13 +53,11 @@ SELECT
     a.genedetail_gencode        genedetail_gencode,
     a.exonicfunc_gencode        exonicfunc_gencode,
     a.aachange_gencode          aachange_gencode,
-    a.dgvmerged                 dgvmerged,
-    a.wgencodebroadhmmk562hmm   wgencodebroadhmmk562hmm,
-    a.wgencoderegtfbsclustered  wgencoderegtfbsclustered,
-    a.wgrna                     wgrna,
-    b.clinvar_20150629          clinvar_20150629,
+    b.wgencodebroadhmmk562hmm   wgencodebroadhmmk562hmm,
+    c.dgvmerged                 dgvmerged,
     a.chromosome                chromosome
-FROM va_aaa.va_aaa_loci_annovar_2b a 
-LEFT OUTER JOIN annovar.clinvar_part b
+FROM va_aaa.va_aaa_loci_annovar_2 a
+LEFT OUTER JOIN annovar.encode_k562_part b
 ON (a.position = b.start_position AND a.chromosome = b.chromosome)
-WHERE b.clinvar_20150629 != '.';
+LEFT OUTER JOIN annovar.structuralvariants_part c
+ON ( a.position = c.start_position AND a.chromosome = c.chromosome);
