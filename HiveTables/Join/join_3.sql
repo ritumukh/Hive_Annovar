@@ -57,13 +57,15 @@ SELECT
     a.genedetail_gencode        genedetail_gencode,
     a.exonicfunc_gencode        exonicfunc_gencode,
     a.aachange_gencode          aachange_gencode,
-    a.dgvmerged                 dgvmerged,
     a.wgencodebroadhmmk562hmm   wgencodebroadhmmk562hmm,
+    a.dgvmerged                 dgvmerged,
     a.wgencoderegtfbsclustered  wgencoderegtfbsclustered,
     a.wgrna                     wgrna,
     b.clinvar_20150629          clinvar_20150629,
     a.chromosome                chromosome
 FROM va_aaa.va_aaa_loci_annovar_2b a 
-LEFT OUTER JOIN annovar.clinvar_part b
-ON (a.position = b.start_position AND a.chromosome = b.chromosome)
-WHERE b.clinvar_20150629 != '.';
+LEFT OUTER JOIN 
+(SELECT chromosome, start_position, clinvar_20150629
+FROM annovar.clinvar_part 
+WHERE clinvar_20150629 != '.') b
+ON (a.position = b.start_position AND a.chromosome = b.chromosome);
